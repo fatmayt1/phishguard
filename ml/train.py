@@ -10,7 +10,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
 from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import (accuracy_score, precision_score,
                              recall_score, f1_score, confusion_matrix)
 
@@ -54,6 +55,7 @@ def preprocess(df):
 
 
 # ---------- 3) MODELLER ----------
+# ---------- 3) MODELLER ----------
 def get_models():
     return {
         # LR, özelliklerin aynı ölçekte olmasından etkilenir -> StandardScaler
@@ -61,10 +63,16 @@ def get_models():
             ("scaler", StandardScaler()),
             ("model", LogisticRegression(max_iter=1000)),
         ]),
-        # RF ölçekten etkilenmez, ölçeklemeye gerek yok
+        # kNN mesafe hesapladığı için ölçeğe çok duyarlı -> StandardScaler
+        "KNN": Pipeline([
+            ("scaler", StandardScaler()),
+            ("model", KNeighborsClassifier(n_neighbors=5)),
+        ]),
+        # Ağaç tabanlı modeller ölçekten etkilenmez, ölçeklemeye gerek yok
         "RandomForest": RandomForestClassifier(
             n_estimators=200, random_state=42, n_jobs=-1
         ),
+        "GradientBoosting": GradientBoostingClassifier(random_state=42),
     }
 
 
